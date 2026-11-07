@@ -1,0 +1,43 @@
+name: Update data
+
+# The dataset (https://github.com/codecruz/spain-postal-codes) is rebuilt from
+# INE data every January and July. Check monthly and open a pull request when
+# the published dataset has changed.
+on:
+  schedule:
+    - cron: '0 7 5 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+      - uses: ramsey/composer-install@v3
+
+      - name: Rebuild resources/data.php
+        id: build
+        run: |
+          php bin/build-data.php
+          vendor/bin/phpunit
+          echo "period=$(php -r '$d = require "resources/data.php"; echo $d["meta"]["period"];')" >> "$GITHUB_OUTPUT"
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: data/${{ steps.build.outputs.period }}
+          commit-message: 'data: update to INE period ${{ steps.build.outputs.period }}'
+          title: 'data: update to INE period ${{ steps.build.outputs.period }}'
+          body: |
+            Automatic update of `resources/data.php` from the [spain-postal-codes dataset](https://codecruz.github.io/spain-postal-codes/), period ${{ steps.build.outputs.period }}.
+
+            After merging, tag a new minor version so Packagist publishes it.
+          add-paths: resources/data.php
+          delete-branch: true

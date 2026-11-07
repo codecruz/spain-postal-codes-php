@@ -1,0 +1,48 @@
+{
+    "name": "codecruz/spain-postal-codes",
+    "description": "Spanish postal codes, municipalities and provinces from official INE data. Offline lookup, zero dependencies.",
+    "type": "library",
+    "keywords": ["spain", "españa", "postal-code", "codigo-postal", "zip-code", "municipios", "provincias", "ine"],
+    "homepage": "https://codecruz.github.io/spain-postal-codes/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "codecruz",
+            "homepage": "https://github.com/codecruz"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/codecruz/spain-postal-codes-php/issues",
+        "source": "https://github.com/codecruz/spain-postal-codes-php"
+    },
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^10.5 || ^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Codecruz\\SpainPostalCodes\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Codecruz\\SpainPostalCodes\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "build-data": "@php bin/build-data.php",
+        "analyse": "phpstan analyse",
+        "test": "phpunit"
+    },
+    "scripts-descriptions": {
+        "build-data": "Regenerate resources/data.php from the dataset (see bin/build-data.php --help).",
+        "analyse": "Run PHPStan.",
+        "test": "Run the test suite."
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
