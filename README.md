@@ -113,6 +113,44 @@ composer build-data  # regenerate resources/data.php from the published dataset
 
 `resources/data.php` is generated: don't edit it by hand. Data errors should be reported in the [dataset repository](https://github.com/codecruz/spain-postal-codes/issues).
 
+## Releasing
+
+Packagist reads tags straight from this repository, so there is nothing to upload and no token to manage. A new tag shows up on [Packagist](https://packagist.org/packages/codecruz/spain-postal-codes) within seconds.
+
+### Versioning
+
+The library follows [Semantic Versioning](https://semver.org/):
+
+| Change | Version bump |
+|--------|--------------|
+| Bug fixes | **patch** |
+| New INE data | **minor** |
+| New methods or options | **minor** |
+| Removed or renamed methods, changed return types | **major** |
+
+### Updating the data
+
+1. On the 5th of each month, `update-data.yml` checks the [published dataset](https://codecruz.github.io/spain-postal-codes/) and opens a pull request titled `data: update to INE period <period>` if it changed. You can also start it by hand from the **Actions** tab (*Update data → Run workflow*). You can also run `composer build-data` locally.
+2. Review the diff of `resources/data.php` and merge it once CI is green.
+3. Release a new **minor** version (below).
+
+### Publishing a version
+
+1. Add the version to `CHANGELOG.md`, with the INE period for data updates. Open a pull request and merge it into `main`.
+2. Create a GitHub release on `main` whose tag is `v` plus the version:
+
+   ```bash
+   gh release create v1.1.0 --target main --title "v1.1.0" --notes "Data: INE callejero 2027-01"
+   ```
+
+3. Check that the version is listed on Packagist and that it installs:
+
+   ```bash
+   composer require codecruz/spain-postal-codes:^1.1
+   ```
+
+Don't move or delete a tag once it is published: Composer users may already have it locked. To fix a bad release, publish a new patch version.
+
 ## License
 
 - **Code:** [MIT](LICENSE).
